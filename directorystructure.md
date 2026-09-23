@@ -14,6 +14,7 @@ crates/
   obs-websocket-tokio/     tokio-tungstenite
   obs-websocket-embassy/   embassy-net
   obs-websocket/           Client、コールバック、再接続、状態キャッシュ
+    examples/cli.rs        clap の照会・操作 CLI
   obs-websocket-mock/      テスト用サーバー
 xtask/                     codegen / fetch-protocol / protocol-diff
 .github/workflows/         CI と週次の protocol-sync

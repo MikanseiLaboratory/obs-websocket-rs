@@ -31,6 +31,7 @@
 - `rustls` 0.23（`ring`, `std`, `tls12`。`obs-websocket-tokio` の `rustls` 機能）
 - `tokio-rustls` 0.26（開発依存。`wss` テストのサーバー側）
 - `rcgen` 0.13（開発依存。`wss` テスト証明書）
+- `clap` 4.6.7（`derive`, `env`。`obs-websocket` の example `cli` の開発依存。rust-version 1.85）
 - `critical-section` 1.2（`std`。ホスト上の embassy テストと例がリンクするために必要）
 - `embedded-io-adapters` 0.6（`tokio-1`。`examples/embassy-std`）
 

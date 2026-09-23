@@ -101,6 +101,19 @@ cargo run -p obs-websocket-embassy --features std --example embassy-std
 
 The example wraps a tokio `TcpStream` so the same framing can be exercised on a host.
 
+## CLI example
+
+`examples/cli.rs` queries and controls a running OBS. The password is read from `--password` or `OBS_WS_PASSWORD`.
+
+```text
+cargo run -p obs-websocket --example cli -- status
+cargo run -p obs-websocket --example cli -- scenes set "Live"
+cargo run -p obs-websocket --example cli -- inputs toggle "Mic"
+cargo run -p obs-websocket --example cli -- stream status
+cargo run -p obs-websocket --example cli -- raw GetVersion
+cargo run -p obs-websocket --example cli -- watch
+```
+
 ## Regenerating the protocol
 
 ```text
