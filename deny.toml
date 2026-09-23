@@ -1,0 +1,32 @@
+[advisories]
+version = 2
+yanked = "deny"
+ignore = [
+    { id = "RUSTSEC-2023-0089", reason = "embedded-websocket 0.9.5 depends on heapless 0.7, which still uses the archived atomic-polyfill crate. There is no upgrade inside that release." },
+    { id = "RUSTSEC-2026-0009", reason = "The fix is time 0.3.47, whose rust-version is 1.88 and would break the 1.85 MSRV. rcgen uses time to stamp test certificates. It does not parse untrusted RFC 2822 input, which is the path the advisory describes." },
+]
+
+[licenses]
+version = 2
+allow = [
+    "0BSD",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "CDLA-Permissive-2.0",
+    "ISC",
+    "MIT",
+    "Unicode-3.0",
+    "Zlib",
+]
+confidence-threshold = 0.8
+
+[bans]
+multiple-versions = "warn"
+wildcards = "allow"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

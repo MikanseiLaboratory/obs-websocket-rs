@@ -1,0 +1,18 @@
+[package]
+name = "obs-websocket-mock"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Scriptable OBS WebSocket server for tests"
+publish = false
+
+[dependencies]
+obs-websocket-core = { workspace = true }
+futures-util = { workspace = true, features = ["std", "sink"] }
+serde = { workspace = true, features = ["derive", "alloc"] }
+serde_json = { workspace = true, features = ["alloc"] }
+tokio = { workspace = true, features = ["macros", "net", "rt", "sync", "time", "io-util"] }
+tokio-tungstenite = { workspace = true }

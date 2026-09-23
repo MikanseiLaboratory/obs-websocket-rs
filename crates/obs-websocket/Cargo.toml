@@ -1,0 +1,32 @@
+[package]
+name = "obs-websocket"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Stateful OBS WebSocket v5 client"
+readme = "README.md"
+
+[features]
+default = ["rustls"]
+## `wss://` support.
+rustls = ["obs-websocket-tokio/rustls"]
+## Cache program scene, input volume, and output status from events.
+state = []
+
+[dependencies]
+obs-websocket-core = { workspace = true }
+obs-websocket-io = { workspace = true }
+obs-websocket-tokio = { workspace = true }
+futures-util = { workspace = true, features = ["std"] }
+serde = { workspace = true, features = ["derive", "alloc"] }
+serde_json = { workspace = true, features = ["alloc"] }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt", "sync", "time"] }
+
+[dev-dependencies]
+clap = { version = "4.6.7", features = ["derive", "env"] }
+obs-websocket-mock = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time", "sync"] }

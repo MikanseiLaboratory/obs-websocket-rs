@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    name: fmt, clippy, test, doc, codegen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+      - name: Test
+        run: cargo test --workspace --all-targets --all-features
+      - name: Generated sources
+        run: cargo xtask codegen --check
+      - name: Rustdoc
+        run: cargo doc --workspace --all-features --no-deps
+        env:
+          RUSTDOCFLAGS: -D warnings
+
+  msrv:
+    name: MSRV 1.85
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85.0
+      - name: Check crates whose MSRV is 1.85
+        run: |
+          cargo check -p obs-websocket-core --all-features --all-targets
+          cargo check -p obs-websocket-io --all-targets
+          cargo check -p obs-websocket-tokio --all-features --all-targets
+          cargo check -p obs-websocket --all-features --all-targets
+          cargo check -p obs-websocket-mock --all-targets
+          cargo check -p xtask --all-targets
+
+  nostd:
+    name: no_std targets
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [thumbv7em-none-eabihf, riscv32imc-unknown-none-elf]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Check no_std crates
+        run: |
+          # rmp-serde enables serde's std feature, so msgpack is not checked on no_std targets.
+          cargo check -p obs-websocket-core --target ${{ matrix.target }}
+          cargo check -p obs-websocket-io --target ${{ matrix.target }}
+          cargo check -p obs-websocket-embassy --target ${{ matrix.target }}
+
+  deny:
+    name: cargo-deny
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@cargo-deny
+      - run: cargo deny check
+
+  semver:
+    name: cargo-semver-checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@cargo-semver-checks
+      - name: Compare against the latest tag when one exists
+        run: |
+          if git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            cargo semver-checks
+          else
+            echo "no git tag; skipping cargo-semver-checks"
+          fi

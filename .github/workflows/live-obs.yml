@@ -1,0 +1,17 @@
+name: live-obs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: Ignored tests against a live OBS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Run ignored live tests
+        run: cargo test -p obs-websocket --lib -- --ignored
+        env:
+          OBS_WS_URL: ${{ secrets.OBS_WS_URL }}
+          OBS_WS_PASSWORD: ${{ secrets.OBS_WS_PASSWORD }}
