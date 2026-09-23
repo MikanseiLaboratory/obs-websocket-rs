@@ -192,7 +192,8 @@ async fn reconnects_and_restores_subscriptions() {
     server.disconnect();
     wait_until(|| server.identifications() >= 2).await;
     assert_eq!(server.event_subscriptions(), Some(4));
-    assert!(client.connection_state() == ConnectionState::Connected);
+    // The state feature snapshots OBS before it reports Connected.
+    wait_until(|| client.connection_state() == ConnectionState::Connected).await;
     server.emit("ExitStarted", json!({}));
     wait_until(|| hits.load(Ordering::SeqCst) >= 1).await;
     let states = states.lock().expect("states");
