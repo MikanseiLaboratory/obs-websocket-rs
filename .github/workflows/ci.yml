@@ -55,7 +55,8 @@ jobs:
           targets: ${{ matrix.target }}
       - name: Check no_std crates
         run: |
-          cargo check -p obs-websocket-core --target ${{ matrix.target }} --all-features
+          # rmp-serde enables serde's std feature, so msgpack is not checked on no_std targets.
+          cargo check -p obs-websocket-core --target ${{ matrix.target }}
           cargo check -p obs-websocket-io --target ${{ matrix.target }}
           cargo check -p obs-websocket-embassy --target ${{ matrix.target }}
 
