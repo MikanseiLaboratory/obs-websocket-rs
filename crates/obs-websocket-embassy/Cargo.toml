@@ -1,0 +1,41 @@
+[package]
+name = "obs-websocket-embassy"
+version.workspace = true
+edition.workspace = true
+rust-version = "1.91"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "embassy-net transport for obs-websocket-io"
+
+[features]
+default = []
+## Enables `examples/embassy-std`, which runs the transport on tokio.
+std = [
+    "dep:critical-section",
+    "dep:embedded-io-adapters",
+    "dep:obs-websocket-mock",
+    "dep:tokio",
+]
+
+[dependencies]
+obs-websocket-core = { workspace = true }
+obs-websocket-io = { workspace = true }
+embassy-net = { workspace = true, features = ["tcp", "proto-ipv4", "medium-ethernet"] }
+embedded-io-async = { workspace = true }
+embedded-websocket = { workspace = true, default-features = false }
+rand_core = { workspace = true }
+critical-section = { version = "1.2", optional = true, features = ["std"] }
+embedded-io-adapters = { version = "0.6", optional = true, features = ["tokio-1"] }
+obs-websocket-mock = { workspace = true, optional = true }
+tokio = { workspace = true, optional = true, features = ["macros", "net", "rt-multi-thread", "time", "io-util"] }
+
+[dev-dependencies]
+critical-section = { version = "1.2", features = ["std"] }
+embedded-io-adapters = { version = "0.6", features = ["tokio-1"] }
+obs-websocket-mock = { workspace = true }
+tokio = { workspace = true, features = ["macros", "net", "rt-multi-thread", "time", "io-util"] }
+
+[[example]]
+name = "embassy-std"
+required-features = ["std"]

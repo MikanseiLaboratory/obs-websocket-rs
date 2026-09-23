@@ -1,0 +1,19 @@
+[package]
+name = "xtask"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+description = "Code generation and protocol sync for obs-websocket-rs"
+
+[[bin]]
+name = "xtask"
+path = "src/main.rs"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, features = ["alloc"] }
+toml = { workspace = true }
+ureq = { workspace = true }

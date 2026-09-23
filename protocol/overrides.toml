@@ -1,0 +1,272 @@
+# Structured objects that protocol.json types only as Object / Array<Object>.
+# Field paths are `{RequestOrEvent}.{request|response|data}.{valueName}`.
+# An explicit override is used as the Rust type verbatim.
+# Object fields without an entry fall back to serde_json::Value and are reported by `cargo xtask codegen`.
+
+[[alias]]
+name = "AudioTracks"
+ty = "alloc::collections::BTreeMap<alloc::string::String, bool>"
+doc = "Audio track enablement. JSON keys are track numbers (`\"1\"` ..= `\"6\"`)."
+
+[[struct]]
+name = "Scene"
+doc = "A scene in a scene collection. `sceneIndex` is null for scenes on a non-main canvas."
+fields = [
+  { name = "sceneName", ty = "String", doc = "Name of the scene." },
+  { name = "sceneUuid", ty = "String", doc = "UUID of the scene." },
+  { name = "sceneIndex", ty = "Option<i64>", doc = "Index in the scene list. Null on non-main canvases." },
+]
+
+[[struct]]
+name = "SceneItemTransform"
+doc = "Full transform and crop of a scene item, as returned by GetSceneItemTransform."
+fields = [
+  { name = "sourceWidth", ty = "f64", doc = "Width of the source, in pixels." },
+  { name = "sourceHeight", ty = "f64", doc = "Height of the source, in pixels." },
+  { name = "positionX", ty = "f64", doc = "Horizontal position." },
+  { name = "positionY", ty = "f64", doc = "Vertical position." },
+  { name = "rotation", ty = "f64", doc = "Clockwise rotation in degrees." },
+  { name = "scaleX", ty = "f64", doc = "Horizontal scale." },
+  { name = "scaleY", ty = "f64", doc = "Vertical scale." },
+  { name = "width", ty = "f64", doc = "Rendered width." },
+  { name = "height", ty = "f64", doc = "Rendered height." },
+  { name = "alignment", ty = "i64", doc = "Alignment bitflags (`obs_alignment`)." },
+  { name = "boundsType", ty = "i64", doc = "Bounds type (`obs_bounds_type`)." },
+  { name = "boundsAlignment", ty = "i64", doc = "Bounds alignment bitflags." },
+  { name = "boundsWidth", ty = "f64", doc = "Bounds width." },
+  { name = "boundsHeight", ty = "f64", doc = "Bounds height." },
+  { name = "cropLeft", ty = "i64", doc = "Left crop, in pixels." },
+  { name = "cropRight", ty = "i64", doc = "Right crop, in pixels." },
+  { name = "cropTop", ty = "i64", doc = "Top crop, in pixels." },
+  { name = "cropBottom", ty = "i64", doc = "Bottom crop, in pixels." },
+  { name = "cropToBounds", ty = "bool", doc = "Whether cropping is relative to bounds." },
+]
+
+[[struct]]
+name = "SceneItemTransformPartial"
+doc = "Partial transform update. Omitted fields are left unchanged by OBS."
+fields = [
+  { name = "sourceWidth", ty = "Option<f64>", doc = "Width of the source, in pixels." },
+  { name = "sourceHeight", ty = "Option<f64>", doc = "Height of the source, in pixels." },
+  { name = "positionX", ty = "Option<f64>", doc = "Horizontal position." },
+  { name = "positionY", ty = "Option<f64>", doc = "Vertical position." },
+  { name = "rotation", ty = "Option<f64>", doc = "Clockwise rotation in degrees." },
+  { name = "scaleX", ty = "Option<f64>", doc = "Horizontal scale." },
+  { name = "scaleY", ty = "Option<f64>", doc = "Vertical scale." },
+  { name = "width", ty = "Option<f64>", doc = "Rendered width." },
+  { name = "height", ty = "Option<f64>", doc = "Rendered height." },
+  { name = "alignment", ty = "Option<i64>", doc = "Alignment bitflags." },
+  { name = "boundsType", ty = "Option<i64>", doc = "Bounds type." },
+  { name = "boundsAlignment", ty = "Option<i64>", doc = "Bounds alignment bitflags." },
+  { name = "boundsWidth", ty = "Option<f64>", doc = "Bounds width." },
+  { name = "boundsHeight", ty = "Option<f64>", doc = "Bounds height." },
+  { name = "cropLeft", ty = "Option<i64>", doc = "Left crop, in pixels." },
+  { name = "cropRight", ty = "Option<i64>", doc = "Right crop, in pixels." },
+  { name = "cropTop", ty = "Option<i64>", doc = "Top crop, in pixels." },
+  { name = "cropBottom", ty = "Option<i64>", doc = "Bottom crop, in pixels." },
+  { name = "cropToBounds", ty = "Option<bool>", doc = "Whether cropping is relative to bounds." },
+]
+
+[[struct]]
+name = "SceneItem"
+doc = "A scene item as returned by GetSceneItemList."
+fields = [
+  { name = "sceneItemId", ty = "i64", doc = "Numeric id of the scene item." },
+  { name = "sceneItemIndex", ty = "i64", doc = "Order index within the scene." },
+  { name = "sceneItemEnabled", ty = "bool", doc = "Whether the item is visible." },
+  { name = "sceneItemLocked", ty = "bool", doc = "Whether the item is locked." },
+  { name = "sceneItemTransform", ty = "SceneItemTransform", doc = "Transform and crop." },
+  { name = "sceneItemBlendMode", ty = "i64", doc = "Blending mode (`obs_blending_type`)." },
+  { name = "sourceName", ty = "String", doc = "Name of the underlying source." },
+  { name = "sourceUuid", ty = "String", doc = "UUID of the underlying source." },
+  { name = "sourceType", ty = "i64", doc = "Source type (`obs_source_type`)." },
+  { name = "inputKind", ty = "Option<String>", doc = "Input kind. Null when the source is not an input." },
+  { name = "isGroup", ty = "Option<bool>", doc = "Whether the source is a group. Null when it is not a scene." },
+]
+
+[[struct]]
+name = "SceneItemIndex"
+doc = "Id and index pair emitted by SceneItemListReindexed."
+fields = [
+  { name = "sceneItemId", ty = "i64", doc = "Numeric id of the scene item." },
+  { name = "sceneItemIndex", ty = "i64", doc = "New order index." },
+]
+
+[[struct]]
+name = "Input"
+doc = "An input as returned by GetInputList."
+fields = [
+  { name = "inputName", ty = "String", doc = "Name of the input." },
+  { name = "inputUuid", ty = "String", doc = "UUID of the input." },
+  { name = "inputKind", ty = "String", doc = "Versioned input kind." },
+  { name = "unversionedInputKind", ty = "String", doc = "Input kind without a version suffix." },
+  { name = "inputKindCaps", ty = "i64", doc = "Source output flags (`obs_source_info.output_flags`)." },
+]
+
+[[struct]]
+name = "SourceFilter"
+doc = "A filter attached to a source."
+fields = [
+  { name = "filterEnabled", ty = "bool", doc = "Whether the filter is enabled." },
+  { name = "filterIndex", ty = "i64", doc = "Index in the filter list." },
+  { name = "filterKind", ty = "String", doc = "Filter kind id." },
+  { name = "filterName", ty = "String", doc = "Name of the filter." },
+  { name = "filterSettings", ty = "serde_json::Value", doc = "Filter-specific settings." },
+]
+
+[[struct]]
+name = "Transition"
+doc = "A scene transition."
+fields = [
+  { name = "transitionName", ty = "String", doc = "Name of the transition." },
+  { name = "transitionUuid", ty = "String", doc = "UUID of the transition." },
+  { name = "transitionKind", ty = "String", doc = "Transition kind id." },
+  { name = "transitionFixed", ty = "bool", doc = "Whether the duration is fixed." },
+  { name = "transitionConfigurable", ty = "bool", doc = "Whether the transition has settings." },
+]
+
+[[struct]]
+name = "OutputFlags"
+doc = "Capability flags of an output."
+fields = [
+  { name = "OBS_OUTPUT_AUDIO", rust_name = "audio", ty = "bool", doc = "Output produces audio." },
+  { name = "OBS_OUTPUT_VIDEO", rust_name = "video", ty = "bool", doc = "Output produces video." },
+  { name = "OBS_OUTPUT_ENCODED", rust_name = "encoded", ty = "bool", doc = "Output consumes encoded packets." },
+  { name = "OBS_OUTPUT_MULTI_TRACK", rust_name = "multi_track", ty = "bool", doc = "Output supports multiple audio tracks." },
+  { name = "OBS_OUTPUT_SERVICE", rust_name = "service", ty = "bool", doc = "Output uses a service." },
+]
+
+[[struct]]
+name = "Output"
+doc = "An output as returned by GetOutputList."
+fields = [
+  { name = "outputName", ty = "String", doc = "Name of the output." },
+  { name = "outputKind", ty = "String", doc = "Output kind id." },
+  { name = "outputWidth", ty = "i64", doc = "Width in pixels." },
+  { name = "outputHeight", ty = "i64", doc = "Height in pixels." },
+  { name = "outputActive", ty = "bool", doc = "Whether the output is active." },
+  { name = "outputFlags", ty = "OutputFlags", doc = "Capability flags." },
+]
+
+[[struct]]
+name = "Monitor"
+doc = "A connected display."
+fields = [
+  { name = "monitorName", ty = "String", doc = "Display name, including its index." },
+  { name = "monitorIndex", ty = "i64", doc = "Index passed to projector requests." },
+  { name = "monitorWidth", ty = "i64", doc = "Width in pixels." },
+  { name = "monitorHeight", ty = "i64", doc = "Height in pixels." },
+  { name = "monitorPositionX", ty = "i64", doc = "Horizontal origin." },
+  { name = "monitorPositionY", ty = "i64", doc = "Vertical origin." },
+]
+
+[[struct]]
+name = "CanvasFlags"
+doc = "Flags of an OBS canvas."
+fields = [
+  { name = "MAIN", rust_name = "main", ty = "bool", doc = "Main canvas." },
+  { name = "ACTIVATE", rust_name = "activate", ty = "bool", doc = "Canvas is activated." },
+  { name = "MIX_AUDIO", rust_name = "mix_audio", ty = "bool", doc = "Canvas mixes audio." },
+  { name = "SCENE_REF", rust_name = "scene_ref", ty = "bool", doc = "Canvas references scenes." },
+  { name = "EPHEMERAL", rust_name = "ephemeral", ty = "bool", doc = "Canvas is ephemeral." },
+]
+
+[[struct]]
+name = "CanvasVideoSettings"
+doc = "Video settings of a canvas. Every field is null when the canvas has no video info."
+fields = [
+  { name = "fpsNumerator", ty = "Option<i64>", doc = "FPS numerator." },
+  { name = "fpsDenominator", ty = "Option<i64>", doc = "FPS denominator." },
+  { name = "baseWidth", ty = "Option<i64>", doc = "Base width." },
+  { name = "baseHeight", ty = "Option<i64>", doc = "Base height." },
+  { name = "outputWidth", ty = "Option<i64>", doc = "Output width." },
+  { name = "outputHeight", ty = "Option<i64>", doc = "Output height." },
+]
+
+[[struct]]
+name = "Canvas"
+doc = "An OBS canvas."
+fields = [
+  { name = "canvasName", ty = "String", doc = "Name of the canvas." },
+  { name = "canvasUuid", ty = "String", doc = "UUID of the canvas." },
+  { name = "canvasFlags", ty = "CanvasFlags", doc = "Canvas flags." },
+  { name = "canvasVideoSettings", ty = "CanvasVideoSettings", doc = "Video settings." },
+]
+
+[[struct]]
+name = "KeyModifiers"
+doc = "Modifier keys for TriggerHotkeyByKeySequence. Omitted modifiers are not pressed."
+fields = [
+  { name = "shift", ty = "Option<bool>", doc = "Shift." },
+  { name = "control", ty = "Option<bool>", doc = "Control." },
+  { name = "alt", ty = "Option<bool>", doc = "Alt." },
+  { name = "command", ty = "Option<bool>", doc = "Command (macOS)." },
+]
+
+[[struct]]
+name = "PropertyItem"
+doc = "One entry of a list property."
+fields = [
+  { name = "itemName", ty = "String", doc = "Display name." },
+  { name = "itemEnabled", ty = "bool", doc = "Whether the entry can be selected." },
+  { name = "itemValue", ty = "serde_json::Value", doc = "Integer, float, string, or null, depending on the combo format." },
+]
+
+[[struct]]
+name = "InputVolumeMeter"
+doc = "Per-input levels from the high-volume InputVolumeMeters event."
+fields = [
+  { name = "inputName", ty = "String", doc = "Name of the input." },
+  { name = "inputUuid", ty = "String", doc = "UUID of the input." },
+  { name = "inputLevelsMul", ty = "Vec<Vec<f64>>", doc = "Per-channel level pairs (magnitude, peak), multiplied by the input volume." },
+]
+
+[fields]
+"GetCanvasList.response.canvases" = "Vec<Canvas>"
+"GetPersistentData.response.slotValue" = "serde_json::Value"
+"SetPersistentData.request.slotValue" = "serde_json::Value"
+"GetStreamServiceSettings.response.streamServiceSettings" = "serde_json::Value"
+"SetStreamServiceSettings.request.streamServiceSettings" = "serde_json::Value"
+"GetSourceFilterList.response.filters" = "Vec<SourceFilter>"
+"GetSourceFilterDefaultSettings.response.defaultFilterSettings" = "serde_json::Value"
+"CreateSourceFilter.request.filterSettings" = "serde_json::Value"
+"GetSourceFilter.response.filterSettings" = "serde_json::Value"
+"SetSourceFilterSettings.request.filterSettings" = "serde_json::Value"
+"BroadcastCustomEvent.request.eventData" = "serde_json::Value"
+"CallVendorRequest.request.requestData" = "serde_json::Value"
+"CallVendorRequest.response.responseData" = "serde_json::Value"
+"TriggerHotkeyByKeySequence.request.keyModifiers" = "KeyModifiers"
+"GetInputList.response.inputs" = "Vec<Input>"
+"CreateInput.request.inputSettings" = "serde_json::Value"
+"GetInputDefaultSettings.response.defaultInputSettings" = "serde_json::Value"
+"GetInputSettings.response.inputSettings" = "serde_json::Value"
+"SetInputSettings.request.inputSettings" = "serde_json::Value"
+"GetInputAudioTracks.response.inputAudioTracks" = "AudioTracks"
+"SetInputAudioTracks.request.inputAudioTracks" = "AudioTracks"
+"GetInputPropertiesListPropertyItems.response.propertyItems" = "Vec<PropertyItem>"
+"GetOutputList.response.outputs" = "Vec<Output>"
+"GetOutputSettings.response.outputSettings" = "serde_json::Value"
+"SetOutputSettings.request.outputSettings" = "serde_json::Value"
+"GetSceneItemList.response.sceneItems" = "Vec<SceneItem>"
+"GetGroupSceneItemList.response.sceneItems" = "Vec<SceneItem>"
+"GetSceneItemTransform.response.sceneItemTransform" = "SceneItemTransform"
+"SetSceneItemTransform.request.sceneItemTransform" = "SceneItemTransformPartial"
+"GetSceneList.response.scenes" = "Vec<Scene>"
+"GetSceneTransitionList.response.transitions" = "Vec<Transition>"
+"GetCurrentSceneTransition.response.transitionSettings" = "serde_json::Value"
+"SetCurrentSceneTransitionSettings.request.transitionSettings" = "serde_json::Value"
+"GetMonitorList.response.monitors" = "Vec<Monitor>"
+"SourceFilterListReindexed.data.filters" = "Vec<SourceFilter>"
+"SourceFilterCreated.data.filterSettings" = "serde_json::Value"
+"SourceFilterCreated.data.defaultFilterSettings" = "serde_json::Value"
+"SourceFilterSettingsChanged.data.filterSettings" = "serde_json::Value"
+"InputCreated.data.inputSettings" = "serde_json::Value"
+"InputCreated.data.defaultInputSettings" = "serde_json::Value"
+"InputSettingsChanged.data.inputSettings" = "serde_json::Value"
+"InputAudioTracksChanged.data.inputAudioTracks" = "AudioTracks"
+"InputVolumeMeters.data.inputs" = "Vec<InputVolumeMeter>"
+"SceneItemListReindexed.data.sceneItems" = "Vec<SceneItemIndex>"
+"SceneItemTransformChanged.data.sceneItemTransform" = "SceneItemTransform"
+"SceneListChanged.data.scenes" = "Vec<Scene>"
+"VendorEvent.data.eventData" = "serde_json::Value"
+"CustomEvent.data.eventData" = "serde_json::Value"

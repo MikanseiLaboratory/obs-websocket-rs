@@ -1,0 +1,44 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/obs-websocket-core",
+    "crates/obs-websocket-io",
+    "crates/obs-websocket-tokio",
+    "crates/obs-websocket-embassy",
+    "crates/obs-websocket",
+    "crates/obs-websocket-mock",
+    "xtask",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+authors = ["MikanseiLaboratory"]
+repository = "https://github.com/MikanseiLaboratory/obs-websocket-rs"
+description = "OBS WebSocket v5 client with a Sans I/O core"
+
+[workspace.dependencies]
+obs-websocket-core = { path = "crates/obs-websocket-core", version = "0.1.0" }
+obs-websocket-io = { path = "crates/obs-websocket-io", version = "0.1.0" }
+obs-websocket-tokio = { path = "crates/obs-websocket-tokio", version = "0.1.0" }
+obs-websocket-mock = { path = "crates/obs-websocket-mock", version = "0.1.0" }
+serde = { version = "1.0", default-features = false }
+serde_json = { version = "1.0", default-features = false }
+sha2 = { version = "0.10.8", default-features = false }
+base64 = { version = "0.22.1", default-features = false }
+thiserror = "2.0"
+tokio = { version = "1.44", default-features = false }
+tokio-tungstenite = "0.26.2"
+futures-util = { version = "0.3.31", default-features = false }
+bitflags = { version = "2.9", default-features = false }
+rmp-serde = { version = "1.3", default-features = false }
+embassy-net = { version = "0.9.1", default-features = false }
+embedded-io-async = { version = "0.6", default-features = false }
+embedded-websocket = { version = "0.9.5", default-features = false }
+rand_core = { version = "0.6", default-features = false }
+proptest = "1.7"
+futures-executor = "0.3"
+toml = "0.8"
+ureq = "2.12"

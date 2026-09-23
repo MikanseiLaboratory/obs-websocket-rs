@@ -1,0 +1,18 @@
+[package]
+name = "obs-websocket-io"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Runtime-agnostic OBS WebSocket connection driver"
+
+[dependencies]
+obs-websocket-core = { workspace = true }
+futures-util = { workspace = true, features = ["alloc", "async-await"] }
+serde_json = { workspace = true, features = ["alloc"] }
+
+[dev-dependencies]
+futures-executor = { workspace = true }
+serde_json = { workspace = true, features = ["alloc"] }

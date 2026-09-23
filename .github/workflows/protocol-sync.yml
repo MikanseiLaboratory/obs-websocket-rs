@@ -1,0 +1,66 @@
+name: protocol-sync
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: Open a PR when obs-websocket 5.x changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Keep the current protocol for the diff
+        run: cp protocol/protocol.json protocol/protocol.previous.json
+      - name: Fetch the latest 5.x tag
+        run: cargo xtask fetch-protocol
+      - name: Detect protocol changes
+        id: protocol
+        run: |
+          if git diff --quiet -- protocol/protocol.json protocol/UPSTREAM.toml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Regenerate bindings
+        if: steps.protocol.outputs.changed == 'true'
+        run: cargo xtask codegen
+      - name: Write the protocol diff
+        if: steps.protocol.outputs.changed == 'true'
+        run: cargo xtask protocol-diff protocol/protocol.previous.json protocol/protocol.json > protocol-diff.md
+      - name: Open or update the pull request
+        if: steps.protocol.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(sed -n 's/^tag = "\(.*\)"/\1/p' protocol/UPSTREAM.toml)
+          branch="protocol-sync/${tag}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add protocol/protocol.json protocol/UPSTREAM.toml \
+            crates/obs-websocket-core/src/generated \
+            crates/obs-websocket/src/generated
+          git commit -m "Sync generated bindings with obs-websocket ${tag}"
+          git push --force-with-lease -u origin "$branch"
+          {
+            echo "This pull request vendors obs-websocket ${tag} and regenerates the typed API."
+            echo
+            echo "Object fields without an entry in \`protocol/overrides.toml\` stay \`serde_json::Value\`. Those fields are listed under \"Object fields still typed as JSON values\"."
+            echo
+            cat protocol-diff.md
+          } > pr-body.md
+          title="Sync protocol with obs-websocket ${tag}"
+          if gh pr view "$branch" >/dev/null 2>&1; then
+            gh pr edit "$branch" --title "$title" --body-file pr-body.md
+          else
+            gh pr create --base main --head "$branch" --title "$title" --body-file pr-body.md
+          fi
