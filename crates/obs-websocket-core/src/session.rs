@@ -431,8 +431,15 @@ impl<C: Codec> Session<C> {
 
     fn on_event(&mut self, data: Value) -> Result<(), SessionError> {
         let message: EventMessage = decode_data(data)?;
-        let event = Event::from_parts(&message.event_type, message.event_data)
-            .map_err(|error| SessionError::Decode(CodecError::new(error.to_string())))?;
+        // A known event whose payload does not match this build stays on the
+        // socket. Only a broken event envelope is a session error.
+        let event = match Event::from_parts(&message.event_type, message.event_data.clone()) {
+            Ok(event) => event,
+            Err(_) => Event::Unknown {
+                event_type: message.event_type,
+                event_data: message.event_data,
+            },
+        };
         self.events.push_back(SessionEvent::Event(event));
         Ok(())
     }
@@ -825,6 +832,42 @@ mod tests {
             }
             other => panic!("unexpected {other:?}"),
         }
+    }
+
+    #[test]
+    fn known_event_with_bad_payload_stays_connected() {
+        let mut session = session(None);
+        identify(&mut session);
+        feed(
+            &mut session,
+            r#"{"op":5,"d":{"eventType":"CurrentProgramSceneChanged","eventIntent":4,"eventData":{"sceneName":1}}}"#,
+        );
+        match session.poll_event() {
+            Some(SessionEvent::Event(Event::Unknown {
+                event_type,
+                event_data,
+            })) => {
+                assert_eq!(event_type, "CurrentProgramSceneChanged");
+                assert_eq!(event_data["sceneName"], 1);
+            }
+            other => panic!("unexpected {other:?}"),
+        }
+        assert!(session.is_identified());
+
+        feed(
+            &mut session,
+            r#"{"op":5,"d":{"eventType":"ExitStarted","eventIntent":1}}"#,
+        );
+        assert!(matches!(
+            session.poll_event(),
+            Some(SessionEvent::Event(Event::ExitStarted(_)))
+        ));
+        assert!(session.is_identified());
+
+        let error = session
+            .handle_message(br#"{"op":5,"d":{"eventIntent":1}}"#)
+            .unwrap_err();
+        assert!(matches!(error, SessionError::Decode(_)));
     }
 
     #[test]

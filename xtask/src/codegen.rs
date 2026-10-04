@@ -455,7 +455,7 @@ fn emit_events(events: &[ProtocolEvent], overrides: &Overrides, index: &Index<'_
         out.push_str(&event.event_type);
         out.push_str("),\n");
     }
-    out.push_str("    /// An event this build does not know.\n    Unknown {\n        /// Raw `eventType`.\n        event_type: String,\n        /// Raw `eventData`.\n        event_data: Value,\n    },\n}\n\nimpl Event {\n    /// Protocol name of this event.\n    pub fn event_type(&self) -> &str {\n        match self {\n");
+    out.push_str("    /// An unknown `eventType`, or a known type whose payload could not be decoded.\n    Unknown {\n        /// Raw `eventType`.\n        event_type: String,\n        /// Raw `eventData`.\n        event_data: Value,\n    },\n}\n\nimpl Event {\n    /// Protocol name of this event.\n    pub fn event_type(&self) -> &str {\n        match self {\n");
     for event in events {
         out.push_str("            Self::");
         out.push_str(&event.event_type);
