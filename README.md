@@ -18,6 +18,20 @@ let version = client.general().get_version().await?;
 println!("{}", version.obs_version);
 ```
 
+## Embassy example
+
+`crates/obs-websocket-embassy/examples/embassy-std.rs` connects the embassy transport to a running OBS over TCP. `OBS_WS_PORT` defaults to 4455. The password is `OBS_WS_PASSWORD`.
+
+```text
+OBS_WS_HOST=127.0.0.1 cargo run -p obs-websocket-embassy --features std --example embassy-std
+```
+
+`examples/w5500-evb-pico` is firmware for the WIZnet W5500-EVB-Pico (`thumbv6m-none-eabi`). `OBS_WS_HOST` defaults to `192.168.1.10` and is an IPv4 address baked in at compile time.
+
+```text
+cargo check -p w5500-evb-pico --target thumbv6m-none-eabi
+```
+
 ## CLI example
 
 `crates/obs-websocket/examples/cli.rs` queries and controls a running OBS. The password is `--password` or `OBS_WS_PASSWORD`.

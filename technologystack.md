@@ -41,6 +41,21 @@
 
 `embassy-net` 0.9.1 が依存する `smoltcp` 0.13 の rust-version は 1.91 である。そのため `obs-websocket-embassy` の MSRV は 1.91 とし、他のクレートは 1.85 のままにする。
 
+`examples/w5500-evb-pico` は W5500-EVB-Pico 向けの非公開ファームウェアで、MSRV は 1.91 である。`embassy-net` の `TcpSocket` は `embedded-io-async` 0.7 を実装し、ライブラリは 0.6 のままなので、変換はファームウェア側に置く。直接依存は次のとおり。
+
+- `embassy-rp` 0.10.0（`defmt`, `unstable-pac`, `time-driver`, `critical-section-impl`, `rp2040`）
+- `embassy-executor` 0.10.0（`platform-cortex-m`, `executor-thread`, `executor-interrupt`, `defmt`）
+- `embassy-time` 0.5.1（`defmt`）
+- `embassy-net` 0.9.1（例側で `dhcpv4` と `defmt` を追加）
+- `embassy-net-wiznet` 0.3.0（`defmt`）
+- `embedded-hal-bus` 0.1.0（`async`）
+- `embedded-io-async` 0.7.0（ソケット側。ライブラリの 0.6.1 は変えない）
+- `embedded-alloc` 0.6.0
+- `static_cell` 2.1.1
+- `portable-atomic` 1.15.0（`critical-section`。RP2040 には CAS が無い）
+- `cortex-m` 0.7.9、`cortex-m-rt` 0.7.7
+- `defmt` 1.1.1、`defmt-rtt` 1.3.0、`panic-probe` 1.0.0
+
 Cargo.lock は MSRV 1.85 を保つため、推移的依存を次に固定している。`cargo update` で上げる場合は 1.85 でのビルドを確認すること。
 
 - `time` 0.3.41（`rcgen` 0.13 経由。0.3.47 以降は RUSTSEC-2026-0009 の修正だが rust-version 1.88。テスト証明書の生成では RFC 2822 の解析をしないため、deny.toml でこの advisory を無視する）

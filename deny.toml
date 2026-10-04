@@ -4,6 +4,9 @@ yanked = "deny"
 ignore = [
     { id = "RUSTSEC-2023-0089", reason = "embedded-websocket 0.9.5 depends on heapless 0.7, which still uses the archived atomic-polyfill crate. There is no upgrade inside that release." },
     { id = "RUSTSEC-2026-0009", reason = "The fix is time 0.3.47, whose rust-version is 1.88 and would break the 1.85 MSRV. rcgen uses time to stamp test certificates. It does not parse untrusted RFC 2822 input, which is the path the advisory describes." },
+    { id = "RUSTSEC-2026-0110", reason = "bare-metal is pulled in by embassy-rp 0.10.0 for examples/w5500-evb-pico. No replacement stays on embassy-net 0.9.1." },
+    { id = "RUSTSEC-2024-0436", reason = "paste is pulled in by pio, which embassy-rp 0.10.0 needs for examples/w5500-evb-pico. No replacement stays on embassy-net 0.9.1." },
+    { id = "RUSTSEC-2026-0173", reason = "proc-macro-error2 is a build dependency of pio-proc, which embassy-rp 0.10.0 needs for examples/w5500-evb-pico. No replacement stays on embassy-net 0.9.1." },
 ]
 
 [licenses]

@@ -1,0 +1,31 @@
+[package]
+name = "w5500-evb-pico"
+version.workspace = true
+edition.workspace = true
+rust-version = "1.91"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish = false
+description = "OBS WebSocket client for the WIZnet W5500-EVB-Pico"
+
+[dependencies]
+obs-websocket-core = { workspace = true }
+obs-websocket-io = { workspace = true }
+obs-websocket-embassy = { path = "../../crates/obs-websocket-embassy" }
+embassy-executor = { version = "0.10.0", features = ["platform-cortex-m", "executor-thread", "executor-interrupt", "defmt"] }
+embassy-time = { version = "0.5.1", features = ["defmt"] }
+embassy-rp = { version = "0.10.0", features = ["defmt", "unstable-pac", "time-driver", "critical-section-impl", "rp2040"] }
+embassy-net = { workspace = true, features = ["defmt", "tcp", "dhcpv4", "medium-ethernet", "proto-ipv4"] }
+embassy-net-wiznet = { version = "0.3.0", features = ["defmt"] }
+cortex-m = { version = "0.7.6", features = ["inline-asm"] }
+cortex-m-rt = "0.7.0"
+defmt = "1.0.1"
+defmt-rtt = "1.0.0"
+panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+embedded-hal-bus = { version = "0.1", features = ["async"] }
+embedded-io-async-06 = { package = "embedded-io-async", version = "0.6", default-features = false }
+embedded-io-async-07 = { package = "embedded-io-async", version = "0.7", default-features = false }
+embedded-alloc = "0.6.0"
+static_cell = "2.1"
+portable-atomic = { version = "1.5", features = ["critical-section"] }

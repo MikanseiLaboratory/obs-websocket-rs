@@ -1,13 +1,4 @@
-//! Connects [`obs_websocket_embassy::EmbassyTransport`] to a running OBS.
-//!
-//! ```text
-//! OBS_WS_HOST=127.0.0.1 OBS_WS_PASSWORD=secret \
-//!   cargo run -p obs-websocket-embassy --features std --example embassy-std
-//! ```
-//!
-//! `OBS_WS_PORT` defaults to 4455. `OBS_WS_PASSWORD` is optional.
-//!
-//! The ignored live test uses the same variables:
+//! Talks to a running OBS. Ignored in CI.
 //!
 //! ```text
 //! OBS_WS_HOST=127.0.0.1 cargo test -p obs-websocket-embassy --features std --test live -- --ignored
@@ -57,18 +48,25 @@ fn password() -> Option<String> {
         .filter(|value| !value.is_empty())
 }
 
-#[tokio::main]
-async fn main() {
+#[unsafe(no_mangle)]
+fn _embassy_time_now() -> u64 {
+    0
+}
+
+#[unsafe(no_mangle)]
+fn _embassy_time_schedule_wake(_at: u64, _waker: &core::task::Waker) {}
+
+#[tokio::test]
+#[ignore = "requires a running OBS; set OBS_WS_HOST, optional OBS_WS_PORT and OBS_WS_PASSWORD"]
+async fn live_get_version() {
     critical_section::with(|_| {});
     let host = required_host();
     let port = port();
     let header = format!("{host}:{port}");
-    let tcp = TcpStream::connect((host.as_str(), port))
-        .await
-        .expect("tcp");
+    let tcp = TcpStream::connect((host.as_str(), port)).await.unwrap();
     let transport = EmbassyTransport::<_, 4096, 4096>::connect(FromTokio::new(tcp), &header, 1)
         .await
-        .expect("handshake");
+        .unwrap();
     let timer = HostTimer {
         origin: Instant::now(),
     };
@@ -79,18 +77,11 @@ async fn main() {
         &timer,
     )
     .await
-    .expect("identify");
+    .unwrap();
+    assert!(connection.negotiated_rpc_version().is_some());
     let version = connection
         .request(&GetVersion::new(), &timer)
         .await
-        .expect("version");
-    println!("{}", version.obs_web_socket_version);
+        .unwrap();
+    assert!(!version.obs_web_socket_version.is_empty());
 }
-
-#[unsafe(no_mangle)]
-fn _embassy_time_now() -> u64 {
-    0
-}
-
-#[unsafe(no_mangle)]
-fn _embassy_time_schedule_wake(_at: u64, _waker: &core::task::Waker) {}
