@@ -2714,7 +2714,7 @@ pub enum Event {
     VendorEvent(VendorEvent),
     /// `CustomEvent`.
     CustomEvent(CustomEvent),
-    /// An event this build does not know.
+    /// An unknown `eventType`, or a known type whose payload could not be decoded.
     Unknown {
         /// Raw `eventType`.
         event_type: String,
