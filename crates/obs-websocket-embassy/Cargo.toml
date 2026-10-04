@@ -10,11 +10,10 @@ description = "embassy-net transport for obs-websocket-io"
 
 [features]
 default = []
-## Enables `examples/embassy-std`, which runs the transport on tokio.
+## Enables `examples/embassy-std`, which runs the transport on tokio against a running OBS.
 std = [
     "dep:critical-section",
     "dep:embedded-io-adapters",
-    "dep:obs-websocket-mock",
     "dep:tokio",
 ]
 

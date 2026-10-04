@@ -17,13 +17,13 @@ jobs:
       - name: Format
         run: cargo fmt --all -- --check
       - name: Clippy
-        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+        run: cargo clippy --workspace --all-targets --all-features --exclude w5500-evb-pico -- -D warnings
       - name: Test
-        run: cargo test --workspace --all-targets --all-features
+        run: cargo test --workspace --all-targets --all-features --exclude w5500-evb-pico
       - name: Generated sources
         run: cargo xtask codegen --check
       - name: Rustdoc
-        run: cargo doc --workspace --all-features --no-deps
+        run: cargo doc --workspace --all-features --no-deps --exclude w5500-evb-pico
         env:
           RUSTDOCFLAGS: -D warnings
 
@@ -59,6 +59,17 @@ jobs:
           cargo check -p obs-websocket-core --target ${{ matrix.target }}
           cargo check -p obs-websocket-io --target ${{ matrix.target }}
           cargo check -p obs-websocket-embassy --target ${{ matrix.target }}
+
+  pico:
+    name: W5500-EVB-Pico check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv6m-none-eabi
+      - name: Check the RP2040 example
+        run: cargo check -p w5500-evb-pico --target thumbv6m-none-eabi
 
   deny:
     name: cargo-deny
