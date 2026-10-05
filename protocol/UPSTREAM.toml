@@ -1,4 +1,4 @@
 repo = "obsproject/obs-websocket"
-tag = "5.7.4"
-commit = "1ef34bf48110c2a18184e50e41cd0b1a855e2147"
+tag = "5.7.5"
+commit = "073a294cd0646fa1744b0ebf3293bfa63a869b50"
 protocol_path = "docs/generated/protocol.json"
